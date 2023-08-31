@@ -72,6 +72,7 @@ menu = """    0. Go back
 Select entry: """
 
 def profile_select():
+    os.system("mode 118,30" if os.name == "nt" else "resize 30 118")
     while True:
         print("""
    ___  _      _ __       __  _____          __           ____       _        ___ ___________   ______          __  
@@ -85,8 +86,11 @@ def profile_select():
                             /___/                                                                                   
 """)
         print("""
-            Welcome! This is a commandline based configuration tool for the Electronic Flight Strips tool by the Digital Controllers: https://github.com/Digital-Controllers/DCS-ATC-Tools
+            Welcome! This is a commandline based configuration tool for the Electronic Flight Strips tool by the 
+            Digital Controllers: https://github.com/Digital-Controllers/DCS-ATC-Tools
+              
             Version 0.1
+              
             Any Issues? Open an issue on github:  https://github.com/SCARED01/DC-ATC-ConfigTool/issues
 """)
         print("What profile do you want to edit? \n")
