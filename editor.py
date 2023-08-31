@@ -85,7 +85,8 @@ menu = """    0. Go back
     3. IP Address
     4. Port
     5. Strip Defaults
-    6. Color Menu
+    6. Connect to server [Online/Offline Mode]
+    7. Color Menu
 Select entry: """
 
 def profile_select():
@@ -281,6 +282,40 @@ def main_menu(selected_profile):
                 strip_default_menu(selected_profile)
                 break
             elif menu_select == 6:
+                os.system('cls' if os.name == 'nt' else 'clear')
+                old_connect_state = data[selected_profile-1]["connect"]
+                print("Selction: 6. Connect to server")
+                print("Current state: "+ str(data[selected_profile-1]["connect"]))
+                print("""
+                    1. True [Online Mode] (EFS Tool will try to find server at the set IP Address on startup)
+                    2. False [Offline Mode] (EFS Tool will not connect to the set IP Address on startup)
+
+    Select option: """, end = "")
+                new_connect_state= input("")
+                if new_connect_state == "exit":
+                    write_config()
+                    exit_screen()
+                else:
+            # try:
+                #     new_port_int = int(new_port)
+                # except:
+                #     print("Please enter a valid Port!")
+                    try:
+                        new_connect_state = int(new_connect_state)
+                    except:
+                        print("Invalid input please Select 1 or 2!")
+                    try:
+                        if new_connect_state == 1:
+                            data[selected_profile-1]["connect"] = "true"
+                        elif new_connect_state == 2:
+                            data[selected_profile-1]["connect"] = "false"
+                        write_config()
+                        print(f"Sucessfully changed 'connect to server' from {old_connect_state} to {new_connect_state}!")
+                        time.sleep(1)
+                        os.system('cls' if os.name == 'nt' else 'clear')
+                    except Exception as e:
+                        print(e)
+            elif menu_select == 7:
                 # Defaults
                 os.system('cls' if os.name == 'nt' else 'clear')
                 color_menu(selected_profile)
