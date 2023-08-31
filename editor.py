@@ -4,6 +4,12 @@ import time
 import sys
 import tkinter as tk
 from tkinter import filedialog
+from rich.console import Console
+from rich.style import Style
+from rich.color import Color
+import re
+
+
 os.system('cls' if os.name == 'nt' else 'clear')
 with open('paths.json', 'r+') as u:
         paths = json.load(u)
@@ -11,7 +17,11 @@ filepath = paths[0]["electronic_flight_strips_config"]
 if filepath == "":
     root = tk.Tk()
     root.withdraw()
-    file_path = filedialog.askopenfilepath()
+    filepath = filedialog.askopenfilename()
+    paths[0]["electronic_flight_strips_config"] = filepath
+    os.remove('paths.json')
+    with open('paths.json', 'w') as u:
+        json.dump(paths, u, indent=4)
 with open(filepath, 'r+') as f:
     data = json.load(f)
 
@@ -37,6 +47,7 @@ menu = """    0. Go back
     3. IP Address
     4. Port
     5. Strip Defaults
+    6. Color Menu
 Select entry: """
 
 def profile_select():
@@ -175,6 +186,11 @@ def main_menu(selected_profile):
                 os.system('cls' if os.name == 'nt' else 'clear')
                 strip_default_menu(selected_profile)
                 break
+            if menu_select == 6:
+                # Defaults
+                os.system('cls' if os.name == 'nt' else 'clear')
+                color_menu(selected_profile)
+                break
                 
 def strip_default_menu(selected_profile):
     # This menu configures the Flight Strip defaults that are assigned to every newly created flight strip
@@ -182,7 +198,8 @@ def strip_default_menu(selected_profile):
         print("Selection 5. Strip Defaults \n")
         strip_default = """
         Here you can set the defaults this profile applies to every newly created Flight Strip.
-        
+
+            0. Go back
             1. Default Callsing(Ex. Hawk 1-1)
             2. Default Flight Rules(IFR/VFR)
             3. Default Service
@@ -572,6 +589,7 @@ def default_flight_plan(selected_profile):
             with open(filepath, 'w') as f:
                 json.dump(data, f, indent=4)
 def configuration_menu():
+
     print("CONFIGURATION MENU")
     print("__________________")
     print("""
@@ -593,10 +611,159 @@ def configuration_menu():
     root = tk.Tk()
     root.withdraw()
     if selection == "1":
-        file_path = filedialog.askopenfilepath()
+        file_path = filedialog.askopenfilename()
         paths[0]["electronic_flight_strips_config"] = file_path
         os.remove('paths.json')
         with open('paths.json', 'w') as u:
             json.dump(paths, u, indent=4)
+def draw_coloured_square(hex_string):
+    """
+    Returns a coloured square that you can print to a terminal.
+    """
+
+    hex_string = hex_string.strip("#")
+    assert len(hex_string) == 6
+    red = int(hex_string[:2], 16)
+    green = int(hex_string[2:4], 16)
+    blue = int(hex_string[4:6], 16)
+
+    style = Style(color=Color.from_rgb(red, green, blue))
+    console = Console()
+    console.print("█", style=style)
+
+# Example usage
+def color_menu(selected_profile):
+    while True:
+        background = data[selected_profile-1]["background_color"]
+        text = data[selected_profile-1]["text_color"]
+        arriving = data[selected_profile-1]["categories"]["Arriving"]
+        departing = data[selected_profile-1]["categories"]["Departing"]
+        emerg = data[selected_profile-1]["emer_color"]
+        print("7. Colour Menu")
+        sys.stdout.write("     1. Background Color ")
+        draw_coloured_square(background)
+        sys.stdout.write("     2. Text Color       ")
+        draw_coloured_square(text)
+        sys.stdout.write("     3. Arriving Color   ")
+        draw_coloured_square(arriving)
+        sys.stdout.write("     4. Departing Color  ")
+        draw_coloured_square(departing)
+        sys.stdout.write("     5. Emergency Color  ")
+        draw_coloured_square(emerg)
+        user_select = input("Select Option: ")
+        if user_select == "0":
+            os.system('cls' if os.name == 'nt' else 'clear')
+            main_menu(selected_profile)
+            break
+        if user_select == "1":
+            os.system('cls' if os.name == 'nt' else 'clear')
+            print("1. Background Color ")
+            print("Current Hex Code: " + background)
+            sys.stdout.write("Current color: ")
+            draw_coloured_square(background)
+            print("""
+                Enter a new Hex code or use 0 to go back one page.
+                
+    """)
+            new_hex = input("Enter hex code: ")
+            if new_hex == "0":
+                pass
+            elif re.search(r'^#(?:[0-9a-fA-F]{3}){1,2}$', new_hex):
+                data[selected_profile-1]["background_color"] = new_hex
+                os.remove(filepath)
+                with open('filepath', 'w') as f:
+                    json.dump(data, f, indent=4)
+            else:
+                print("Invalid Input! Please enter valid hex color code or return to previous menu with 0.")
+                time.sleep(1)
+                os.system('cls' if os.name == 'nt' else 'clear')
+        if user_select == "2":
+            os.system('cls' if os.name == 'nt' else 'clear')
+            print("1. Text Color ")
+            print("Current Hex Code: " + text)
+            sys.stdout.write("Current color: ")
+            draw_coloured_square(text)
+            print("""
+                Enter a new Hex code or use 0 to go back one page.
+                
+    """)
+            new_hex = input("Enter hex code: ")
+            if new_hex == "0":
+                pass
+            elif re.search(r'^#(?:[0-9a-fA-F]{3}){1,2}$', new_hex):
+                data[selected_profile-1]["text_color"] = new_hex
+                os.remove(filepath)
+                with open('filepath', 'w') as f:
+                    json.dump(data, f, indent=4)
+            else:
+                print("Invalid Input! Please enter valid hex color code or return to previous menu with 0.")
+                time.sleep(1)
+                os.system('cls' if os.name == 'nt' else 'clear')
+        if user_select == "3":
+            os.system('cls' if os.name == 'nt' else 'clear')
+            sys.stdout.write("1. Arriving Color ")
+            print("Current Hex Code: " + arriving)
+            sys.stdout.write("Current color: ")
+            draw_coloured_square(arriving)
+            print("""
+                Enter a new Hex code or use 0 to go back one page.
+                
+    """)
+            new_hex = input("Enter hex code: ")
+            if new_hex == 0:
+                pass
+            elif re.search(r'^#(?:[0-9a-fA-F]{3}){1,2}$', new_hex):
+                data[selected_profile-1]["categories"]["Arriving"] = new_hex
+                os.remove(filepath)
+                with open('filepath', 'w') as f:
+                    json.dump(data, f, indent=4)
+            else:
+                print("Invalid Input! Please enter valid hex color code or return to previous menu with 0.")
+                time.sleep(1)
+                os.system('cls' if os.name == 'nt' else 'clear')
+        if user_select == "4":
+            os.system('cls' if os.name == 'nt' else 'clear')
+            print("1. Departing Color ")
+            print("Current Hex Code: " + departing)
+            sys.stdout.write("Current color: ")
+            draw_coloured_square(departing)
+            print("""
+                Enter a new Hex code or use 0 to go back one page.
+                
+    """)
+            new_hex = input("Enter hex code: ")
+            if new_hex == "0":
+                pass
+            elif re.search(r'^#(?:[0-9a-fA-F]{3}){1,2}$', new_hex):
+                data[selected_profile-1]["categories"]["Arriving"] = new_hex
+                os.remove(filepath)
+                with open(filepath, 'w') as f:
+                    json.dump(data, f, indent=4)
+            else:
+                print("Invalid Input! Please enter valid hex color code or return to previous menu with 0.")
+                time.sleep(1)
+                os.system('cls' if os.name == 'nt' else 'clear')
+        if user_select == "5":
+            os.system('cls' if os.name == 'nt' else 'clear')
+            print("1. Emergency Color ")
+            print("Current Hex Code: " + emerg)
+            sys.stdout.write("Current color: ")
+            draw_coloured_square(emerg)
+            print("""
+                Enter a new Hex code or use 0 to go back one page.
+                
+    """)
+            new_hex = input("Enter hex code: ")
+            if new_hex == "0":
+                pass
+            elif re.search(r'^#(?:[0-9a-fA-F]{3}){1,2}$', new_hex):
+                data[selected_profile-1]["emer_color"] = new_hex
+                os.remove(filepath)
+                with open(filepath, 'w') as f:
+                    json.dump(data, f, indent=4)
+            else:
+                print("Invalid Input! Please enter valid hex color code or return to previous menu with 0.")
+                time.sleep(1)
+                os.system('cls' if os.name == 'nt' else 'clear')
 if __name__ == "__main__":
     profile_select()
