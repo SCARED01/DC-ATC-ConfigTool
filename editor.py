@@ -58,23 +58,30 @@ def profile_select():
         print(f"{len(data)+1}" + ".Configure")
         print("Select option: ", end ="")
         selected_profile = input("")
+        try:
+            selected_profile_int = int(selected_profile)
+        except:
+            print(f"Please Enter a number from 1 to {len(data)+1}")
         if selected_profile == str(len(data)+1):
             os.system('cls' if os.name == 'nt' else 'clear')
-            configuration_menu()
+            
         else:
             try:
-                selected_profile = int(selected_profile)
                 os.system('cls' if os.name == 'nt' else 'clear')
-                main_menu(selected_profile)
+                main_menu(selected_profile_int)
+                with open('itworked.txt', 'w') as h:
+                    json.dump("It worked!", h)
                 break
             except Exception as e:
                 print("Nothing selected try again!")
+                print("Im there")
                 selected_profile = None
                 time.sleep(1)
                 os.system('cls' if os.name == 'nt' else 'clear')
 def main_menu(selected_profile):
 
     while True:
+        os.system('cls' if os.name == 'nt' else 'clear')
         print("what do you want to edit?")
 
         print("Selected Profile: " + str(selected_profile) +". " + data[selected_profile-1]["profile_name"])
@@ -84,19 +91,20 @@ def main_menu(selected_profile):
             menu_select = int(menu_select)
         except Exception as e:
             menu_select = None
-            print("Nothing selected try again!")
+            print(e)
+            print("Nothing selected try again! Enter a valid number from 1 to 6!")
             time.sleep(1)
             os.system('cls' if os.name == 'nt' else 'clear')
         if menu_select is not None:
-            if menu_select not in range(len(menu.split("\n"))+1):
+            if menu_select > len(menu.split("\n"))-2:
                 print("This number is unavailable!")
                 time.sleep(1)
                 os.system('cls' if os.name == 'nt' else 'clear')
-            if menu_select == 0:
+            elif menu_select == 0:
                 os.system('cls' if os.name == 'nt' else 'clear')
                 profile_select()
                 break
-            if menu_select == 1:
+            elif menu_select == 1:
                 # Profile Name
                 os.system('cls' if os.name == 'nt' else 'clear')
                 old_name = data[selected_profile-1]["profile_name"]
@@ -118,7 +126,7 @@ def main_menu(selected_profile):
                 except Exception as e:
                     print(e)
 
-            if menu_select == 2:
+            elif menu_select == 2:
                 # Callsign
                 os.system('cls' if os.name == 'nt' else 'clear')
                 old_callsign = data[selected_profile-1]["callsign"]
@@ -139,7 +147,7 @@ def main_menu(selected_profile):
                     os.system('cls' if os.name == 'nt' else 'clear')
                 except Exception as e:
                     print(e)
-            if menu_select == 3:
+            elif menu_select == 3:
                 # IP Address
                 os.system('cls' if os.name == 'nt' else 'clear')
                 old_address = data[selected_profile-1]["ip"]
@@ -160,19 +168,28 @@ def main_menu(selected_profile):
                     os.system('cls' if os.name == 'nt' else 'clear')
                 except Exception as e:
                     print(e)
-            if menu_select == 4:
+            elif menu_select == 4:
                 # Port
                 os.system('cls' if os.name == 'nt' else 'clear')
                 old_port = data[selected_profile-1]["port"]
-                print("Selction: 3. Port")
-                print("Current Port: "+ data[selected_profile-1]["port"])
+                print("Selction: 4. Port")
+                print("Current Port: "+ str(data[selected_profile-1]["port"]))
                 print("""
                     
 
-    Entern new Port: """, end = "")
+    Enter new Port: """, end = "")
+                new_port= input("")
+                # try:
+                #     new_port_int = int(new_port)
+                # except:
+                #     print("Please enter a valid Port!")
                 try:
-                    new_port= input("")
-                    data[selected_profile-1]["port"] = new_port
+                    new_port_int = int(new_port)
+                except:
+                    print("Invalid Port! Please enter a valid port (ex. 6002)")
+                try:
+
+                    data[selected_profile-1]["port"] = new_port_int
                     os.remove(filepath)
                     with open(filepath, 'w') as f:
                         json.dump(data, f, indent=4)
@@ -181,12 +198,12 @@ def main_menu(selected_profile):
                     os.system('cls' if os.name == 'nt' else 'clear')
                 except Exception as e:
                     print(e)
-            if menu_select == 5:
+            elif menu_select == 5:
                 # Defaults
                 os.system('cls' if os.name == 'nt' else 'clear')
                 strip_default_menu(selected_profile)
                 break
-            if menu_select == 6:
+            elif menu_select == 6:
                 # Defaults
                 os.system('cls' if os.name == 'nt' else 'clear')
                 color_menu(selected_profile)
@@ -223,6 +240,7 @@ def strip_default_menu(selected_profile):
             print(e)
             strip_default_select = None
             print("Nothing selected try again!")
+            print("Im here")
             time.sleep(1)
             os.system('cls' if os.name == 'nt' else 'clear')
         if strip_default_select == 0:
@@ -765,5 +783,7 @@ def color_menu(selected_profile):
                 print("Invalid Input! Please enter valid hex color code or return to previous menu with 0.")
                 time.sleep(1)
                 os.system('cls' if os.name == 'nt' else 'clear')
+
+
 if __name__ == "__main__":
     profile_select()
