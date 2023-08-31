@@ -8,6 +8,10 @@ os.system('cls' if os.name == 'nt' else 'clear')
 with open('paths.json', 'r+') as u:
         paths = json.load(u)
 filepath = paths[0]["electronic_flight_strips_config"]
+if filepath == "":
+    root = tk.Tk()
+    root.withdraw()
+    file_path = filedialog.askopenfilepath()
 with open(filepath, 'r+') as f:
     data = json.load(f)
 
