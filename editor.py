@@ -468,9 +468,14 @@ Entern default callsign: """, end = "")
                     write_config()
                     exit_screen()
                 else:
-                    data[selected_profile-1]["strip_defaults"]["fligt_size"] = new_flight_size
-                    write_config()
-                    print(f"Sucessfully changed default flight size from {old_flight_size} to {new_flight_size}!")
+                    try:
+                        new_flight_size_int = int(new_flight_size)
+                    except:
+                        print("Only Numbers allowed!")
+                    if isinstance(new_flight_size_int, int):
+                        data[selected_profile-1]["strip_defaults"]["fligt_size"] = new_flight_size
+                        write_config()
+                        print(f"Sucessfully changed default flight size from {old_flight_size} to {new_flight_size}!")
                     time.sleep(1)
                     os.system('cls' if os.name == 'nt' else 'clear')
             except Exception as e:
@@ -695,9 +700,9 @@ def default_flight_plan(selected_profile):
                     alt_int=int(altitude)
                 except:
                     print("Altitude can only be a number")
-                # needs fixing to only write valid altitude
-                data[selected_profile-1]["strip_defaults"]["flight_plan"]["altitude"] = altitude
-                write_config()
+                if isinstance(alt_int, int):
+                    data[selected_profile-1]["strip_defaults"]["flight_plan"]["altitude"] = altitude
+                    write_config()
 def configuration_menu():
 
     print("CONFIGURATION MENU")
@@ -744,7 +749,7 @@ def draw_coloured_square(hex_string):
     console = Console()
     console.print("█", style=style)
 
-# Example usage
+
 def color_menu(selected_profile):
     while True:
         os.system('cls' if os.name == 'nt' else 'clear')
