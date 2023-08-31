@@ -32,8 +32,12 @@ if filepath == "":
     os.remove('paths.json')
     with open('paths.json', 'w') as u:
         json.dump(paths, u, indent=4)
-with open(filepath, 'r+') as f:
-    data = json.load(f)
+try:
+    with open(filepath, 'r+') as f:
+        data = json.load(f)
+except:
+    print("Could not open config File")
+    data = []
 
 
 
@@ -56,6 +60,8 @@ def write_config():
     except KeyboardInterrupt:
         with open(filepath, "w") as f:
             json.dump(data, f, indent=4)
+
+
 def exit_screen():
     os.system('cls' if os.name == 'nt' else 'clear')
     print("""
@@ -69,7 +75,7 @@ def exit_screen():
                     Any issues? Open an issue on github:
                     https://github.com/SCARED01/DC-ATC-ConfigTool/issues
           """)
-    time.sleep(3.5)
+    time.sleep(2.6)
     sys.exit(0)
 
 
@@ -107,9 +113,13 @@ def profile_select():
             Any Issues? Open an issue on github:  https://github.com/SCARED01/DC-ATC-ConfigTool/issues
 """)
         print("What profile do you want to edit? \n")
-        for i in range(len(data)):
-            sys.stdout.write(str(i+1) +"." + data[i]["profile_name"] + "\n")
-        print(f"{len(data)+1}" + ".Configure")
+        if len(data) != 0:
+            for i in range(len(data)):
+                sys.stdout.write(str(i+1) +"." + data[i]["profile_name"] + "\n")
+            print(f"{len(data)+1}" + ".Configure")
+        else:
+            print("Couldn't read config try to reselect using config menu and restart!")
+            print(f"{len(data)+1}" + ".Configure")
         print("Select option: ", end ="")
         selected_profile = input("")
         try:
