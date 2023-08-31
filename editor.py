@@ -38,7 +38,28 @@ with open(filepath, 'r+') as f:
 #         menu = menu + "    "+ str(idx) +". " + entries[idx] + "\n"
 #     print(menu + "Select Entry: ", end="")
 
-
+def write_config():
+    try:
+        os.remove(filepath)
+        with open(filepath, "w") as f:
+            json.dump(data, f, indent=4)
+    except KeyboardInterrupt:
+        with open(filepath, "w") as f:
+            json.dump(data, f, indent=4)
+def exit_screen():
+    os.system('cls' if os.name == 'nt' else 'clear')
+    print("""
+ ________             __     __  __            ___                    _             __  __   _       __            ____
+/_  __/ /  ___ ____  / /__   \ \/ /__  __ __  / _/__  ____  __ _____ (_)__  ___ _  / /_/ /  (_)__   / /____  ___  / / /
+ / / / _ \/ _ `/ _ \/  '_/    \  / _ \/ // / / _/ _ \/ __/ / // (_-</ / _ \/ _ `/ / __/ _ \/ (_-<  / __/ _ \/ _ \/ /_/ 
+/_/ /_//_/\_,_/_//_/_/\_\     /_/\___/\_,_/ /_/ \___/_/    \_,_/___/_/_//_/\_, /  \__/_//_/_/___/  \__/\___/\___/_(_)  
+                                                                          /___/                                        
+""")
+    print("""
+                    Any issues? Open an issue on github:
+                    https://github.com/SCARED01/DC-ATC-ConfigTool/issues
+          """)
+    exit()
 
 
 menu = """    0. Go back
@@ -52,6 +73,22 @@ Select entry: """
 
 def profile_select():
     while True:
+        print("""
+   ___  _      _ __       __  _____          __           ____       _        ___ ___________   ______          __  
+  / _ \(_)__ _(_) /____ _/ / / ___/__  ___  / /________  / / /__ ___( )___   / _ /_  __/ ___/__/_  __/__  ___  / /__
+ / // / / _ `/ / __/ _ `/ / / /__/ _ \/ _ \/ __/ __/ _ \/ / / -_) __//(_-<  / __ |/ / / /__/___// / / _ \/ _ \/ (_-<
+/____/_/\_, /_/\__/\_,_/_/  \___/\___/_//_/\__/_/  \___/_/_/\__/_/   /___/ /_/ |_/_/  \___/    /_/  \___/\___/_/___/
+       /___/____          ____                    __  _             ______          __                              
+          / ___/__  ___  / _(_)__ ___ _________ _/ /_(_)__  ___    /_  __/__  ___  / /                              
+         / /__/ _ \/ _ \/ _/ / _ `/ // / __/ _ `/ __/ / _ \/ _ \    / / / _ \/ _ \/ /                               
+         \___/\___/_//_/_//_/\_, /\_,_/_/  \_,_/\__/_/\___/_//_/   /_/  \___/\___/_/                                
+                            /___/                                                                                   
+""")
+        print("""
+            Welcome! This is a commandline based configuration tool for the Electronic Flight Strips tool by the Digital Controllers: https://github.com/Digital-Controllers/DCS-ATC-Tools
+            Version 0.1
+            Any Issues? Open an issue on github:  https://github.com/SCARED01/DC-ATC-ConfigTool/issues
+""")
         print("What profile do you want to edit? \n")
         for i in range(len(data)):
             sys.stdout.write(str(i+1) +"." + data[i]["profile_name"] + "\n")
@@ -64,13 +101,14 @@ def profile_select():
             print(f"Please Enter a number from 1 to {len(data)+1}")
         if selected_profile == str(len(data)+1):
             os.system('cls' if os.name == 'nt' else 'clear')
+        elif selected_profile == "exit":
+            write_config()
+            exit_screen()
             
         else:
             try:
                 os.system('cls' if os.name == 'nt' else 'clear')
                 main_menu(selected_profile_int)
-                with open('itworked.txt', 'w') as h:
-                    json.dump("It worked!", h)
                 break
             except Exception as e:
                 print("Nothing selected try again!")
@@ -90,11 +128,15 @@ def main_menu(selected_profile):
         try:
             menu_select = int(menu_select)
         except Exception as e:
-            menu_select = None
-            print(e)
-            print("Nothing selected try again! Enter a valid number from 1 to 6!")
-            time.sleep(1)
-            os.system('cls' if os.name == 'nt' else 'clear')
+            if menu_select == "exit":
+                write_config()
+                exit_screen()
+            else:
+                menu_select = None
+                print(e)
+                print("Nothing selected try again! Enter a valid number from 1 to 6!")
+                time.sleep(1)
+                os.system('cls' if os.name == 'nt' else 'clear')
         if menu_select is not None:
             if menu_select > len(menu.split("\n"))-2:
                 print("This number is unavailable!")
@@ -117,9 +159,7 @@ def main_menu(selected_profile):
                 try:
                     new_profile_name = input("")
                     data[selected_profile-1]["profile_name"] = new_profile_name
-                    os.remove(filepath)
-                    with open(filepath, 'w') as f:
-                        json.dump(data, f, indent=4)
+                    write_config()
                     print(f"Sucessfully changed profile name from {old_name} to {new_profile_name}!")
                     time.sleep(1)
                     os.system('cls' if os.name == 'nt' else 'clear')
@@ -139,9 +179,7 @@ def main_menu(selected_profile):
                 try:
                     new_callsign = input("")
                     data[selected_profile-1]["callsign"] = new_callsign
-                    os.remove(filepath)
-                    with open(filepath, 'w') as f:
-                        json.dump(data, f, indent=4)
+                    write_config()
                     print(f"Sucessfully changed callsign from {old_callsign} to {new_callsign}!")
                     time.sleep(1)
                     os.system('cls' if os.name == 'nt' else 'clear')
@@ -160,9 +198,7 @@ def main_menu(selected_profile):
                 try:
                     new_address= input("")
                     data[selected_profile-1]["ip"] = new_address
-                    os.remove(filepath)
-                    with open(filepath, 'w') as f:
-                        json.dump(data, f, indent=4)
+                    write_config()
                     print(f"Sucessfully changed IP Address from {old_address} to {new_address}!")
                     time.sleep(1)
                     os.system('cls' if os.name == 'nt' else 'clear')
@@ -190,9 +226,7 @@ def main_menu(selected_profile):
                 try:
 
                     data[selected_profile-1]["port"] = new_port_int
-                    os.remove(filepath)
-                    with open(filepath, 'w') as f:
-                        json.dump(data, f, indent=4)
+                    write_config()
                     print(f"Sucessfully changed port from {old_port} to {new_port}!")
                     time.sleep(1)
                     os.system('cls' if os.name == 'nt' else 'clear')
@@ -236,13 +270,17 @@ def strip_default_menu(selected_profile):
             #test for user input is number
             strip_default_select = int(strip_default_select)
         except Exception as e:
-            # incase user selcts nothing
-            print(e)
-            strip_default_select = None
-            print("Nothing selected try again!")
-            print("Im here")
-            time.sleep(1)
-            os.system('cls' if os.name == 'nt' else 'clear')
+            if strip_default_select == "exit":
+                write_config()
+                exit_screen()
+            else:
+                # incase user selcts nothing
+                print(e)
+                strip_default_select = None
+                print("Nothing selected try again!")
+                print("Im here")
+                time.sleep(1)
+                os.system('cls' if os.name == 'nt' else 'clear')
         if strip_default_select == 0:
             # back one menu
             os.system('cls' if os.name == 'nt' else 'clear')
@@ -263,9 +301,7 @@ Entern default callsign: """, end = "")
                 #take user input, and clear screen
                 new_default_callsign= input("")
                 data[selected_profile-1]["strip_defaults"]["callsign"] = new_default_callsign
-                os.remove(filepath)
-                with open(filepath, 'w') as f:
-                    json.dump(data, f, indent=4)
+                write_config()
                 print(f"Sucessfully changed default callsign from {old_default_callsign} to {new_default_callsign}!")
                 time.sleep(1)
                 os.system('cls' if os.name == 'nt' else 'clear')
@@ -294,9 +330,7 @@ Entern default callsign: """, end = "")
                     print("Invalid Input. Please select one of the options above!")
                     data[selected_profile-1]["strip_defaults"]["service"] = old_default_flight_rules
                 if new_default_flight_rules == "1" or new_default_flight_rules == "2":
-                    os.remove(filepath)
-                    with open(filepath, 'w') as f:
-                        json.dump(data, f, indent=4)
+                    write_config()
                 print(f"Sucessfully changed default Flight Rules from {old_default_flight_rules} to {new_default_flight_rules}!")
                 time.sleep(1)
                 os.system('cls' if os.name == 'nt' else 'clear')
@@ -325,9 +359,7 @@ Entern default callsign: """, end = "")
                     print("Invalid input. Please select one of the options above!")
                     data[selected_profile-1]["strip_defaults"]["service"] = old_default_service
                 if new_default_service == "1" or new_default_service == "2":
-                    os.remove(filepath)
-                    with open(filepath, 'w') as f:
-                        json.dump(data, f, indent=4)
+                    write_config()
                 print(f"Sucessfully changed default Service from {old_default_service} to {new_default_service}!")
                 time.sleep(1)
                 os.system('cls' if os.name == 'nt' else 'clear')
@@ -354,9 +386,7 @@ Entern default callsign: """, end = "")
                     print("Invalid input. Please select one of the options above!")
                     data[selected_profile-1]["strip_defaults"]["service"] = old_default_category
                 if new_default_service == "1" or new_default_service == "2":
-                    os.remove(filepath)
-                    with open(filepath, 'w') as f:
-                        json.dump(data, f, indent=4)
+                    write_config()
                 print(f"Sucessfully changed default Service from {old_default_category} to {new_default_category}!")
                 time.sleep(1)
                 os.system('cls' if os.name == 'nt' else 'clear')
@@ -376,9 +406,7 @@ Entern default callsign: """, end = "")
                     #open browser
                     pass
                 data[selected_profile-1]["strip_defaults"]["type"] = new_type
-                os.remove(filepath)
-                with open(filepath, 'w') as f:
-                    json.dump(data, f, indent=4)
+                write_config()
                 print(f"Sucessfully changed default Service from {old_type} to {new_type}!")
                 time.sleep(1)
                 os.system('cls' if os.name == 'nt' else 'clear')
@@ -394,9 +422,7 @@ Entern default callsign: """, end = "")
             try:
                 new_flight_size= input("Enter Flight Size: ")
                 data[selected_profile-1]["strip_defaults"]["fligt_size"] = new_flight_size
-                os.remove(filepath)
-                with open(filepath, 'w') as f:
-                    json.dump(data, f, indent=4)
+                write_config()
                 print(f"Sucessfully changed default flight size from {old_flight_size} to {new_flight_size}!")
                 time.sleep(1)
                 os.system('cls' if os.name == 'nt' else 'clear')
@@ -428,9 +454,7 @@ Entern default callsign: """, end = "")
                         pass
                     if new_heading.split("H")[1] == "XXX" or new_heading.split("H")[1] == "RWY" or new_heading_int % 5 == 0:
                         data[selected_profile-1]["strip_defaults"]["hdg"] = new_heading
-                        os.remove(filepath)
-                        with open(filepath, 'w') as f:
-                            json.dump(data, f, indent=4)
+                        write_config()
                         print(f"Sucessfully changed default heading from {old_headign} to {new_heading}!")
                         time.sleep(1)
                         os.system('cls' if os.name == 'nt' else 'clear')
@@ -469,9 +493,7 @@ Entern default callsign: """, end = "")
                 if new_alt.startswith("A"):
                     if new_alt.split("A")[1] == "XXX" or new_alt.split("A")[1] == "GLS" or new_alt_int % 5 == 0:
                         data[selected_profile-1]["strip_defaults"]["alt"] = new_alt
-                        os.remove(filepath)
-                        with open(filepath, 'w') as f:
-                            json.dump(data, f, indent=4)
+                        write_config()
                         print(f"Sucessfully changed default altitude from {old_alt} to {new_alt}!")
                         time.sleep(1)
                         os.system('cls' if os.name == 'nt' else 'clear')
@@ -507,9 +529,7 @@ Entern default callsign: """, end = "")
                 if new_spd.startswith("S"):
                     if new_spd.split("S")[1] == "XXX" or new_spd_int % 5 == 0:
                         data[selected_profile-1]["strip_defaults"]["alt"] = new_alt
-                        os.remove(filepath)
-                        with open(filepath, 'w') as f:
-                            json.dump(data, f, indent=4)
+                        write_config()
                         print(f"Sucessfully changed default speed from {old_spd} to {new_spd}!")
                         time.sleep(1)
                         os.system('cls' if os.name == 'nt' else 'clear')
@@ -542,7 +562,9 @@ def default_flight_plan(selected_profile):
               """)
         print("Select entry: ", end ="")
         entry = input("")
-
+        if entry == "exit":
+            write_config()
+            exit_screen()
         if entry == "1":
             print("""
     Select the default departure airport for new Flight Strips:
@@ -552,9 +574,7 @@ def default_flight_plan(selected_profile):
 """, end = "")
             departure = input("Enter Departure Airport: ")
             data[selected_profile-1]["strip_defaults"]["flight_plan"]["departure"] = departure.upper()
-            os.remove(filepath)
-            with open(filepath, 'w') as f:
-                json.dump(data, f, indent=4)
+            write_config()
         if entry == "2":
             print("""
     Select the default arrival airport for new Flight Strips:
@@ -564,9 +584,7 @@ def default_flight_plan(selected_profile):
 """, end = "")
             arrival = input("Enter Arrical Airport: ")
             data[selected_profile-1]["strip_defaults"]["flight_plan"]["arrival"] = arrival.upper()
-            os.remove(filepath)
-            with open(filepath, 'w') as f:
-                json.dump(data, f, indent=4)
+            write_config()
         if entry == 3:
             print("""
     Select the default route for new Flight Strips:
@@ -576,9 +594,7 @@ def default_flight_plan(selected_profile):
 """, end = "")           
             route = input("Enter Route: ")
             data[selected_profile-1]["strip_defaults"]["flight_plan"]["route"] = route.upper()
-            os.remove(filepath)
-            with open(filepath, 'w') as f:
-                json.dump(data, f, indent=4)
+            write_config()
         if entry == 4:
             print("""
     Select the default equipment for new Flight Strips:
@@ -589,9 +605,7 @@ def default_flight_plan(selected_profile):
 """, end = "")           
             equipment = input("Enter Equipment: ")
             data[selected_profile-1]["strip_defaults"]["flight_plan"]["equipment"] = equipment.upper()
-            os.remove(filepath)
-            with open(filepath, 'w') as f:
-                json.dump(data, f, indent=4)
+            write_config()
         if entry == 5:
             print("""
     Select the default planned cruise altitude for new Flight Strips:
@@ -603,9 +617,7 @@ def default_flight_plan(selected_profile):
             except:
                 print("Altitude can only be a number")
             data[selected_profile-1]["strip_defaults"]["flight_plan"]["altitude"] = altitude
-            os.remove(filepath)
-            with open(filepath, 'w') as f:
-                json.dump(data, f, indent=4)
+            write_config()
 def configuration_menu():
 
     print("CONFIGURATION MENU")
@@ -628,6 +640,9 @@ def configuration_menu():
     selection = input("Select Option: ")
     root = tk.Tk()
     root.withdraw()
+    if selection == "exit":
+        write_config()
+        exit_screen()
     if selection == "1":
         file_path = filedialog.askopenfilename()
         paths[0]["electronic_flight_strips_config"] = file_path
@@ -652,6 +667,7 @@ def draw_coloured_square(hex_string):
 # Example usage
 def color_menu(selected_profile):
     while True:
+        os.system('cls' if os.name == 'nt' else 'clear')
         background = data[selected_profile-1]["background_color"]
         text = data[selected_profile-1]["text_color"]
         arriving = data[selected_profile-1]["categories"]["Arriving"]
@@ -669,6 +685,9 @@ def color_menu(selected_profile):
         sys.stdout.write("     5. Emergency Color  ")
         draw_coloured_square(emerg)
         user_select = input("Select Option: ")
+        if user_select == "exit":
+            write_config()
+            exit_screen()
         if user_select == "0":
             os.system('cls' if os.name == 'nt' else 'clear')
             main_menu(selected_profile)
@@ -688,9 +707,7 @@ def color_menu(selected_profile):
                 pass
             elif re.search(r'^#(?:[0-9a-fA-F]{3}){1,2}$', new_hex):
                 data[selected_profile-1]["background_color"] = new_hex
-                os.remove(filepath)
-                with open('filepath', 'w') as f:
-                    json.dump(data, f, indent=4)
+                write_config()
             else:
                 print("Invalid Input! Please enter valid hex color code or return to previous menu with 0.")
                 time.sleep(1)
@@ -710,9 +727,7 @@ def color_menu(selected_profile):
                 pass
             elif re.search(r'^#(?:[0-9a-fA-F]{3}){1,2}$', new_hex):
                 data[selected_profile-1]["text_color"] = new_hex
-                os.remove(filepath)
-                with open('filepath', 'w') as f:
-                    json.dump(data, f, indent=4)
+                write_config()
             else:
                 print("Invalid Input! Please enter valid hex color code or return to previous menu with 0.")
                 time.sleep(1)
@@ -732,9 +747,7 @@ def color_menu(selected_profile):
                 pass
             elif re.search(r'^#(?:[0-9a-fA-F]{3}){1,2}$', new_hex):
                 data[selected_profile-1]["categories"]["Arriving"] = new_hex
-                os.remove(filepath)
-                with open('filepath', 'w') as f:
-                    json.dump(data, f, indent=4)
+                write_config()
             else:
                 print("Invalid Input! Please enter valid hex color code or return to previous menu with 0.")
                 time.sleep(1)
@@ -754,9 +767,7 @@ def color_menu(selected_profile):
                 pass
             elif re.search(r'^#(?:[0-9a-fA-F]{3}){1,2}$', new_hex):
                 data[selected_profile-1]["categories"]["Arriving"] = new_hex
-                os.remove(filepath)
-                with open(filepath, 'w') as f:
-                    json.dump(data, f, indent=4)
+                write_config()
             else:
                 print("Invalid Input! Please enter valid hex color code or return to previous menu with 0.")
                 time.sleep(1)
@@ -776,9 +787,7 @@ def color_menu(selected_profile):
                 pass
             elif re.search(r'^#(?:[0-9a-fA-F]{3}){1,2}$', new_hex):
                 data[selected_profile-1]["emer_color"] = new_hex
-                os.remove(filepath)
-                with open(filepath, 'w') as f:
-                    json.dump(data, f, indent=4)
+                write_config()
             else:
                 print("Invalid Input! Please enter valid hex color code or return to previous menu with 0.")
                 time.sleep(1)
