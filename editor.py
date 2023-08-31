@@ -17,7 +17,7 @@ filepath = paths[0]["electronic_flight_strips_config"]
 if filepath == "":
     root = tk.Tk()
     root.withdraw()
-    filepath = filedialog.askopenfilename()
+    filepath = filedialog.askopenfilename(title="Select Config.json for Electronic Flight Strips tool.")
     paths[0]["electronic_flight_strips_config"] = filepath
     os.remove('paths.json')
     with open('paths.json', 'w') as u:
@@ -724,7 +724,7 @@ def configuration_menu():
         write_config()
         exit_screen()
     if selection == "1":
-        file_path = filedialog.askopenfilename()
+        file_path = filedialog.askopenfilename(title="Select Config.json for Electronic Flight Strips tool.")
         paths[0]["electronic_flight_strips_config"] = file_path
         os.remove('paths.json')
         with open('paths.json', 'w') as u:
