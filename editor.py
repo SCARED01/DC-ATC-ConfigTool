@@ -15,14 +15,20 @@ try:
     with open('paths.json', 'r+') as u:
             paths = json.load(u)
 except:
-    with open('paths.json', 'W') as u:
-            paths = json.load(u)
-filepath = paths[0]["electronic_flight_strips_config"]
+    with open('paths.json', 'w') as u:
+            paths= {
+                
+                    "electronic_flight_strips_config": ""
+                
+            }
+            json.dump(paths, u, indent=4)
+
+filepath = paths["electronic_flight_strips_config"]
 if filepath == "":
     root = tk.Tk()
     root.withdraw()
     filepath = filedialog.askopenfilename(title="Select Config.json for Electronic Flight Strips tool.")
-    paths[0]["electronic_flight_strips_config"] = filepath
+    paths["electronic_flight_strips_config"] = filepath
     os.remove('paths.json')
     with open('paths.json', 'w') as u:
         json.dump(paths, u, indent=4)
@@ -63,7 +69,8 @@ def exit_screen():
                     Any issues? Open an issue on github:
                     https://github.com/SCARED01/DC-ATC-ConfigTool/issues
           """)
-    exit()
+    time.sleep(3.5)
+    sys.exit(0)
 
 
 menu = """    0. Go back
@@ -732,7 +739,7 @@ def configuration_menu():
         exit_screen()
     if selection == "1":
         file_path = filedialog.askopenfilename(title="Select Config.json for Electronic Flight Strips tool.")
-        paths[0]["electronic_flight_strips_config"] = file_path
+        paths["electronic_flight_strips_config"] = file_path
         os.remove('paths.json')
         with open('paths.json', 'w') as u:
             json.dump(paths, u, indent=4)
