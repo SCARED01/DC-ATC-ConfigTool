@@ -119,7 +119,6 @@ def profile_select():
                 break
             except Exception as e:
                 print("Nothing selected try again!")
-                print("Im there")
                 selected_profile = None
                 time.sleep(1)
                 os.system('cls' if os.name == 'nt' else 'clear')
@@ -301,7 +300,6 @@ def strip_default_menu(selected_profile):
                 print(e)
                 strip_default_select = None
                 print("Nothing selected try again!")
-                print("Im here")
                 time.sleep(1)
                 os.system('cls' if os.name == 'nt' else 'clear')
         if strip_default_select == 0:
