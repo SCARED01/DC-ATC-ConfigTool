@@ -11,8 +11,12 @@ import re
 
 
 os.system('cls' if os.name == 'nt' else 'clear')
-with open('paths.json', 'r+') as u:
-        paths = json.load(u)
+try:
+    with open('paths.json', 'r+') as u:
+            paths = json.load(u)
+except:
+    with open('paths.json', 'W') as u:
+            paths = json.load(u)
 filepath = paths[0]["electronic_flight_strips_config"]
 if filepath == "":
     root = tk.Tk()
