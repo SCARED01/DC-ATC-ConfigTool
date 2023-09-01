@@ -9,7 +9,12 @@ from rich.style import Style
 from rich.color import Color
 import re
 
-
+"""
+Features to add:
+- Look for Running EFS instance
+- Ability to run/stop/restart EFS from the tool
+-Add Server and VCCS(Interphone) config support
+"""
 os.system('cls' if os.name == 'nt' else 'clear')
 try:
     with open('paths.json', 'r+') as u:
@@ -670,8 +675,10 @@ Entern default callsign: """, end = "")
 
 def default_flight_plan(selected_profile):
     while True:
+        os.system('cls' if os.name == 'nt' else 'clear')
         print("""10./6. Flight Plan defaults
               
+                    0. Go back
                     1. Departure Airport
                     2. Arrival Airport
                     3. Route
@@ -683,6 +690,8 @@ def default_flight_plan(selected_profile):
         if entry == "exit":
             write_config()
             exit_screen()
+        if entry == "0":
+            strip_default_menu()
         if entry == "1":
             print("""
     Select the default departure airport for new Flight Strips:
